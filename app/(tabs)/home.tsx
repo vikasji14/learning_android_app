@@ -35,10 +35,10 @@ export default function HomeScreen() {
         <Text className='flex text-2xl font-bold' style={{justifyContent:'center' ,textAlign:'center'}}>You don't have any courses</Text>
       </View>
 
-      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-2 px-4 rounded justify-center items-center'>
+      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-4 px-4 rounded justify-center items-center'>
         <Text className='text-white font-bold' onPress={() => router.push('/addCourse')}>+ Create New course</Text>
       </View>
-      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-2 px-4 rounded justify-center items-center'>
+      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-4 px-4 rounded justify-center items-center'>
         <Text className='text-white font-bold' >Explore Existing Courses</Text>
       </View>
     </View>
