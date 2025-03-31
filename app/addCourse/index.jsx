@@ -78,7 +78,7 @@ const Index = () => {
                 onPress={onGenerateTopic}
                 style={{ justifyContent: 'center', textAlign: 'center' }}
             >
-                {loading ? <ActivityIndicator size="small" color="white" /> : "Generate Topics"}
+                {loading ? <ActivityIndicator size="small" color="white" /> : "Search Topic"}
             </Text>
             <View className="mt-4">
                 <Text>*** Select all topic which you want to add in the course</Text>
@@ -89,8 +89,11 @@ const Index = () => {
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             ) : (
-                <View className="mt-4 bg-white rounded-lg shadow-md p-4 border border-gray-200">
-                <Text className="text-xl font-bold text-gray-800 mb-2">Generated Topics</Text>
+                <View className="mt-4 bg-white  p-4 ">
+                {topicList?.length > 0 && (
+  <Text className="text-xl font-bold text-gray-800 mb-2">Topics</Text>
+)}
+
                 <ScrollView className="max-h-60" style={{ maxHeight: 350 }}>    
                     {topicList?.slice(1, -1).map((item, index) => (
                         <View key={index} className="p-3 bg-gray-100 rounded-md mb-2">
