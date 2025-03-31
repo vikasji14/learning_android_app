@@ -6,7 +6,7 @@ const generatePrompt = (userInput) => {
         return "";
     }
 
-    return dedent`
+  return dedent`
       - As you are a coaching teacher
       - User wants to learn about the topic
       - Generate 10-15 course titles for study (Short)
@@ -18,4 +18,7 @@ const generatePrompt = (userInput) => {
     `;
 };
 
-export default generatePrompt;
+
+
+
+export default generatePrompt; ;

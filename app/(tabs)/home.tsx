@@ -1,46 +1,40 @@
-import { Image, StyleSheet, Platform , View,Text} from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { Image,ScrollView, Platform, View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Courses from '@/components/Courses';
+import Practice from '@/components/Practice';
 export default function HomeScreen() {
   const router = useRouter();
+
+
   return (
-
-    <View className='flex-1 bg-white mt-10 p-4'>
-      <View className='flex flex-row items-center w-full' style={{justifyContent:'space-between', borderRadius: 10}}>
+    <View  style={{ padding: 25, backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 25 }}>
+      {/* Header Section */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', borderRadius: 10 }}>
         <View>
-          <Text className='font-bold text-3xl'>Hello, Vikas</Text>
-         <Text className=''>Let's get started!</Text>
+          <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Hello, Vikas</Text>
+          <Text>Let's get started!</Text>
         </View>
-        <View>
-          <Ionicons name="settings-outline" size={24} color="black" className='text-bold' /> 
-        </View>
-      </View>
-      <View>
-        <Image
-          source={require('@/assets/images/landing.png')}
-          style={{
-            width: '100%',
-            height: 300,
-            // marginTop:40
-          }}
-        />
+        <Ionicons name="settings-outline" size={24} color="black" />
       </View>
 
-      <View>
-        <Text className='flex text-2xl font-bold' style={{justifyContent:'center' ,textAlign:'center'}}>You don't have any courses</Text>
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}  style={{ marginTop: 20 }}>
 
-      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-4 px-4 rounded justify-center items-center'>
-        <Text className='text-white font-bold' onPress={() => router.push('/addCourse')}>+ Create New course</Text>
-      </View>
-      <View className='bg-blue-500 mt-10 p-4 hover:bg-blue-800 py-4 px-4 rounded justify-center items-center'>
-        <Text className='text-white font-bold' >Explore Existing Courses</Text>
-      </View>
+      {/* Practice Section */}
+      <Practice/>
+     
+      {/* Course Section */}
+      <Courses/>
+  
+      {/* Buttons Section */}
+      <TouchableOpacity onPress={() => router.push('/addCourse')} style={{ backgroundColor: '#3b82f6', padding: 15, borderRadius: 10, marginTop: 20, alignItems: 'center' }}>
+        <Text style={{ color: 'white', fontWeight: 'bold' }}>+ Create New Course</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={{ backgroundColor: '#3b82f6', padding: 15, borderRadius: 10, marginTop: 10, alignItems: 'center' }}>
+        <Text style={{ color: 'white', fontWeight: 'bold' }}>Explore Existing Courses</Text>
+      </TouchableOpacity>
+
+      </ScrollView>
     </View>
-  )
+  );
 }

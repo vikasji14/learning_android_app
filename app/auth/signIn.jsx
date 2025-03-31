@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text,Platform, Image, TextInput, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from "expo-router";
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
@@ -17,11 +17,11 @@ export default function SignIn() {
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-white p-4">
+    <View style={{ padding: 25, backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 25 }}>
       <View>
         <Image
           source={require('../../assets/images/landing.png')}
-          className=" w-52 h-52 mb-4"
+          style={{ width: 300, height: 300 }}
           resizeMode="contain"
         />
       </View>
