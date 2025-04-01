@@ -8,7 +8,7 @@ export default function HomeScreen() {
 
 
   return (
-    <View  style={{ padding: 25, backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 25 }}>
+    <View   style={{ padding: 10, backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 45 }}>
       {/* Header Section */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', borderRadius: 10 }}>
         <View>

@@ -6,6 +6,10 @@ export default function Practice() {
         { id: 1,name:'flashcard', image: require('@/assets/images/flashcard.png') },
         { id: 2,name:'Quiz', image: require('@/assets/images/quiz.png') },
         { id: 3, name:'Question & answer', image: require('@/assets/images/qa.png') },
+        { id: 4, name:'Test', image: require('@/assets/images/flashcard.png') },
+        { id: 5, name:'Exame', image: require('@/assets/images/flashcard.png') },
+        { id: 6, name:'Solution', image: require('@/assets/images/flashcard.png') },
+        { id: 7, name:'Home Work ', image: require('@/assets/images/flashcard.png') },
     ];
 
     return (
@@ -33,11 +37,11 @@ export default function Practice() {
                             height: 100,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            elevation: 5,
-                            shadowColor: '#000',
+                            elevation: 4,
+                            shadowColor: 'white',
                             shadowOpacity: 0.2,
                             shadowOffset: { width: 0, height: 2 },
-                            shadowRadius: 4,
+                            // shadowRadius: 4,
                         }}
                     >
                         <View style={{ position: 'relative', width: 96, height: 96 }}>
@@ -48,6 +52,7 @@ export default function Practice() {
                                     top: 10,
                                     marginLeft: 5,
                                     textAlign: 'left',
+                                    fontWeight: 'bold',
                                     color: 'black',
                                     paddingVertical: 2,
                                     borderTopLeftRadius: 10,

@@ -1,10 +1,10 @@
-import { Image, StyleSheet, Platform, View, Text, TouchableOpacity } from "react-native";
+import { Image, Platform, View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 export default function HomeScreen() {
     const router = useRouter();
   return (
     <View
-    style={{ backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 25 }}
+    style={{ backgroundColor: 'white', flex: 1, paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45 : 45 }}
     >
       <Image
         source={require("@/assets/images/landing.png")}
@@ -33,7 +33,7 @@ export default function HomeScreen() {
         <TouchableOpacity onPress={() => router.push('/auth/signIn')}>
             <Text style={{borderWidth:1, borderColor:'white', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'white', fontSize:16, shadowColor:'black'}}>Already have an account?</Text>
         </TouchableOpacity>
-        <View>
+        {/* <View>
             <Image
                 source={require('@/assets/images/landing.png')}
                 style={{
@@ -45,8 +45,14 @@ export default function HomeScreen() {
                     left: 100,
                 }}
             />
-        </View>
+        </View> */}
+
+        <TouchableOpacity onPress={() => router.push('/home')} >
+            <Text style={{backgroundColor:'white', textShadowColor:'#0075Ff', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'black', fontSize:20 , fontWeight:'bold'}}>Home Screen</Text>
+        </TouchableOpacity>
       </View>
+
+     
     </View>
   );
 }

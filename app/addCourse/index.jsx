@@ -4,6 +4,7 @@ import { View,Platform, Text,TouchableOpacity, TextInput, ScrollView, ActivityIn
 import { initializeChatSession } from '../../app/config/AiModel';
 import generatePrompt from '../../constants/prompt'; // Ensure correct import path
 import generatePromptTopic from '../../constants/courseGenerate'; // Ensure correct import path
+import CourseContent from '../../components/CourseContent';
 const Index = () => {
     const [loading, setLoading] = useState(false);
     const [courseGenerateLoading, setCourseGenerateLoading] = useState(false);
@@ -11,6 +12,7 @@ const Index = () => {
     const [topicList, setTopicList] = useState();
     const [selectedTopics, setSelectedTopics] = useState([]);
     const [chatSession, setChatSession] = useState(null);
+    const [courseContent, setCourseContent] = useState(null);
     // ✅ Initialize chat session once on mount
     React.useEffect(() => {
         const setupChat = async () => {
@@ -39,7 +41,7 @@ const Index = () => {
                 .map(line => line.replace(/^topic_\d+:\s*/, "").trim()) // Remove "topic_X:" prefix
 
             // ✅ Convert into key-value format
-            const formattedTopics = topicIdeas.map((topic, index) => `topic_${index + 1}: "${topic}"`).join(",\n");
+            // const formattedTopics = topicIdeas.map((topic, index) => `topic_${index + 1}: "${topic}"`).join(",\n");
             setTopicList(topicIdeas);
         } catch (error) {
             console.error("Error generating topics:", error);
@@ -63,6 +65,7 @@ const Index = () => {
             const fullPrompt = generatePromptTopic(selectedTopics);
             const aiRes = await chatSession.sendMessage(fullPrompt);
             const responseText = aiRes.response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            setCourseContent(responseText);
             console.log("AI Response:", responseText);
         } catch (error) {
             console.error("Error generating topics:", error);
@@ -85,20 +88,20 @@ const Index = () => {
     };
     
     return (
-        <View  style={{padding:10, backgroundColor:'white', flex:1,  paddingTop: (Platform.OS === 'ios' || Platform.OS =='web') && 45, }}>
+        <ScrollView  style={{padding:10, backgroundColor:'white', flex:1,  paddingTop: (Platform.OS === 'ios' || Platform.OS === 'web') ? 45:45, }}>
             <Text className="text-2xl font-bold">Create New Course</Text>
             <Text className="text-gray-500 text-2xl mt-4">
                 What do you want to learn today?
             </Text>
-            <Text className="mt-4 text-lg text-center">
-                Enter a course name (e.g., Web Development, Data Science, Java)
+            <Text className="mt-4 text-lg text-center" style={{ justifyContent: 'center', textAlign: 'left' }}>
+                Enter a course name
             </Text>
             <TextInput
                 onChangeText={setUserInput}
                 multiline={true}
                 numberOfLines={4}
                 placeholder="e.g., Web Development, Data Science"
-                className="w-full bg-gray-100 p-4 rounded-lg border border-gray-300 mt-4 focus:border-blue-500"
+                className="w-full bg-gray-100 p-4 rounded-lg border border-gray-300 mt-2 focus:border-blue-500"
             />
             <Text
                 type="outline"
@@ -118,16 +121,16 @@ const Index = () => {
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             ) : (
-                <View className="mt-4 bg-white  p-4 ">
+                <View className="mt-4 bg-white p-4 ">
                 {topicList?.length > 0 && (
-                <Text className="text-xl font-bold text-gray-800 mb-2">Topics</Text>
+                <Text className="text-xl font-bold text-gray-800 mb-4">Topics</Text>
                 )}
 
                 <ScrollView className="max-h-60" style={{ maxHeight: 350 }}>    
                     {topicList?.slice(1, -1).map((item, index) => (
                       <TouchableOpacity 
                       key={index} 
-                      className={`p-3 rounded-md mb-2 ${isTopicSelected(item) ? 'bg-blue-500' : 'bg-gray-100'}`} 
+                      className={`p-3 rounded-md mb-2 ${isTopicSelected(item) ? 'bg-gray-400' : 'bg-gray-100'}`} 
                       onPress={() => onSelectTopic(item)}
                   >
                       <Text className={`text-lg ${isTopicSelected(item) ? 'text-white' : 'text-gray-700'}`}>
@@ -156,9 +159,11 @@ const Index = () => {
         </View>
 
             )
-        }
+        }   
 
-        </View>
+        <CourseContent aiChat={courseContent}/>
+
+        </ScrollView>
     );
 };
 
