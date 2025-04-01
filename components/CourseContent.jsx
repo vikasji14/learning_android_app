@@ -3,17 +3,18 @@ import { View, Text, FlatList, ScrollView } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 
 const CourseContent = ({ aiChat }) => {
+  // console.log(aiChat?.courses);
+
   if (!aiChat || !aiChat.courses) {
     return <Text>Loading...</Text>;
   }
 
   const { courses } = aiChat;
-
-  console.log("Courses:", courses);
+  console.log("wht the hell");
 
   return (
     <ScrollView style={{ padding: 10 }}>
-      {courses.map((course, index) => (
+      {courses?.map((course, index) => (
         <View key={index} style={{ marginBottom: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{course.courseTitle}</Text>
           <Text style={{ fontSize: 16, marginBottom: 10 }}>{course.description}</Text>
