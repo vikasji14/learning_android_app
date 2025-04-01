@@ -5,6 +5,8 @@ import { initializeChatSession } from '../../app/config/AiModel';
 import generatePrompt from '../../constants/prompt'; // Ensure correct import path
 import generatePromptTopic from '../../constants/courseGenerate'; // Ensure correct import path
 import CourseContent from '../../components/CourseContent';
+import RenderHTML from 'react-native-render-html';
+
 const Index = () => {
     const [loading, setLoading] = useState(false);
     const [courseGenerateLoading, setCourseGenerateLoading] = useState(false);
@@ -14,19 +16,6 @@ const Index = () => {
     const [chatSession, setChatSession] = useState(null);
     const [courseContent, setCourseContent] = useState();
 
-    const data = {
-    "courses": [
-    {
-      "courseTitle": "Intro to Web Development",
-      "description": "This course provides a comprehensive introduction to the world of web development, covering fundamental concepts and technologies necessary to build interactive and dynamic websites. You'll learn HTML, CSS, and JavaScript, along with best practices for creating accessible and responsive web experiences.",
-      "banner_image": "/banner1.png",
-      "course_image": "/course1.png",
-
-    }
-  ]
-}
-
-console.log(data.courses[0]);
     // ✅ Initialize chat session once on mount
     React.useEffect(() => {
         const setupChat = async () => {
@@ -62,7 +51,6 @@ console.log(data.courses[0]);
         }
         setLoading(false);
 
-        console.log("Generated Topics:", topicList);
 
     };
 
@@ -78,10 +66,9 @@ console.log(data.courses[0]);
             // 🔥 Combine the AI Prompt with User Input
             const fullPrompt = generatePromptTopic(selectedTopics);
             const aiRes = await chatSession.sendMessage(fullPrompt);
-            const responseText = aiRes.response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
+            let responseText = aiRes.response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            // console.log("ai res",responseText);
             setCourseContent(responseText);
-            console.log(responseText);
         } catch (error) {
             console.error("Error generating topics:", error);
         }
@@ -176,7 +163,7 @@ console.log(data.courses[0]);
             )
         }   
 
-        <CourseContent aiChat={courseContent}/>
+        <CourseContent message={courseContent}/>
 
         </ScrollView>
     );
