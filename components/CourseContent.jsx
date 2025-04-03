@@ -21,23 +21,6 @@ const CourseContent = ({ jsonData }) => {
     }));
   };
 
-  // const submitQuiz = () => {
-  //   setQuizSubmitted(true);
-  //   let correct = 0, incorrect = 0, totalQa = 0;
-
-  //   jsonData.courses.forEach((course, courseIndex) => {
-  //     totalQa += course.quiz?.length || 0;
-  //     course.quiz?.forEach((question, questionIndex) => {
-  //       if (selectedAnswers[`${courseIndex}-${questionIndex}`]?.isCorrect) {
-  //         correct++;
-  //       } else {
-  //         incorrect++;
-  //       }
-  //     });
-  //   });
-
-  //   setReport({ totalQa, correct, incorrect });
-  // };
   const submitQuiz = () => {
     setQuizSubmitted(true);
     let correct = 0, incorrect = 0, totalQa = 0;
@@ -106,107 +89,105 @@ const CourseContent = ({ jsonData }) => {
           ))}
           {/* Quiz Section */}
           <TouchableOpacity onPress={() => toggleQuizSection(courseIndex)} style={styles.flashcardToggle}>
-  <Text style={styles.sectionTitle}>Quiz {quizVisibility[courseIndex] ? '-' : '+'}</Text>
-</TouchableOpacity>
+            <Text style={styles.sectionTitle}>Quiz {quizVisibility[courseIndex] ? '-' : '+'}</Text>
+          </TouchableOpacity>
 
-{quizVisibility[courseIndex] && (
-  <>
-    {course.quiz.map((quiz, quizIndex) => {
-      const selectedOption = selectedAnswers[`${courseIndex}-${quizIndex}`]?.selected;
-      return (
-        <View key={quizIndex} style={styles.quizContainer}>
-          <Text style={styles.quizQuestion}>{quiz.question}</Text>
-          {quiz.options.map((option, optionIndex) => {
-            const isSelected = selectedOption === optionIndex;
-            const isCorrect = quiz.correctAnswer === option;
-            return (
-              <TouchableOpacity
-                key={optionIndex}
-                onPress={() => handleAnswerSelect(courseIndex, quizIndex, optionIndex, quiz.correctAnswer)}
-                style={[
-                  styles.quizOption,
-                  isSelected && (isCorrect ? styles.correctOption : styles.incorrectOption)
-                ]}>
-                <Text>{optionLabels[optionIndex]}. {option}</Text>
+          {quizVisibility[courseIndex] && (
+            <>
+              {course.quiz.map((quiz, quizIndex) => {
+                const selectedOption = selectedAnswers[`${courseIndex}-${quizIndex}`]?.selected;
+                return (
+                  <View key={quizIndex} style={styles.quizContainer}>
+                    <Text style={styles.quizQuestion}>{quiz.question}</Text>
+                    {quiz.options.map((option, optionIndex) => {
+                      const isSelected = selectedOption === optionIndex;
+                      const isCorrect = quiz.correctAnswer === option;
+                      const isDisabled = selectedOption !== undefined; // 🛑 Disable after selection
+
+                      return (
+                        <TouchableOpacity
+                          key={optionIndex}
+                          onPress={() => !isDisabled && handleAnswerSelect(courseIndex, quizIndex, optionIndex, quiz.correctAnswer)} // 🔒 Disable selection after first choice
+                          style={[
+                            styles.quizOption,
+                            isSelected && (isCorrect ? styles.correctOption : styles.incorrectOption),
+                            isDisabled && styles.disabledOption // Optional: Style for disabled state
+                          ]}
+                          disabled={isDisabled} // 🚫 Disable button
+                        >
+                          <Text>{optionLabels[optionIndex]}. {option}</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                    {quizSubmitted && (
+                      <Text style={styles.correctAnswer}>
+                        Answer: {optionLabels[quiz.options.findIndex(option => option === quiz.correctAnswer)]}
+                      </Text>
+                    )}
+                  </View>
+                );
+              })}
+
+              {/* 🟢 **Submit Button (only visible when quiz is open)** */}
+              <TouchableOpacity onPress={submitQuiz} style={styles.submitButton}>
+                <Text style={styles.submitButtonText}>Final Submit</Text>
               </TouchableOpacity>
-            );
-          })}
-          {quizSubmitted && (
-            <Text style={styles.correctAnswer}>
-              Answer: {optionLabels[quiz.options.findIndex(option => option === quiz.correctAnswer)]}
-            </Text>
+
+              {quizSubmitted && (
+                <View style={{ alignItems: 'center', marginTop: 40 }}>
+                  {/* Box Container */}
+                  <View style={{ flexDirection: 'row', gap: 10 }}>
+                    {/* Total Questions */}
+                    <View style={{ backgroundColor: '#6c5ce7', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.totalQa}</Text>
+                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#6c5ce7', fontWeight: 'bold' }}>Total</Text>
+                    </View>
+
+                    {/* Total Attempted */}
+                    <View style={{ backgroundColor: '#fdcb6e', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+                      <Text style={{ fontWeight: 'bold', color: 'black' }}>{report.correct + report.incorrect}</Text>
+                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#e17055', fontWeight: 'bold' }}>Attempted</Text>
+                    </View>
+
+                    {/* Correct Answers */}
+                    <View style={{ backgroundColor: '#00b894', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.correct}</Text>
+                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#00b894', fontWeight: 'bold' }}>Correct</Text>
+                    </View>
+
+                    {/* Incorrect Answers */}
+                    <View style={{ backgroundColor: '#d63031', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.incorrect}</Text>
+                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#d63031', fontWeight: 'bold' }}>Incorrect</Text>
+                    </View>
+                  </View>
+
+                  {/* Pass/Fail/Good Circle */}
+                  <View style={{
+                    marginTop: 20,
+                    width: 80,
+                    height: 80,
+                    borderRadius: 50,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor:
+                      report.correct > 15 ? '#00b894' :
+                        report.correct > 8 ? '#0984e3' : '#d63031'
+                  }}>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                      {report.correct > 15 ? "Great!" :
+                        report.correct > 8 ? "Pass" :
+                          "Fail"}
+                    </Text>
+                  </View>
+                </View>
+
+
+
+              )}
+
+            </>
           )}
-        </View>
-      );
-    })}
-
-    {/* 🟢 **Submit Button (only visible when quiz is open)** */}
-    <TouchableOpacity onPress={submitQuiz} style={styles.submitButton}>
-      <Text style={styles.submitButtonText}>Final Submit</Text>
-    </TouchableOpacity>
-    
-    {quizSubmitted && (
-            <View style={{ alignItems: 'center', marginTop: 40 }}>
-              {/* Box Container */}
-              <View style={{ flexDirection: 'row', gap: 10 }}>
-                {/* Total Questions */}
-                <View style={{ backgroundColor: '#6c5ce7', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                  <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.totalQa}</Text>
-                  <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#6c5ce7', fontWeight: 'bold' }}>Total</Text>
-                </View>
-
-                {/* Total Attempted */}
-                <View style={{ backgroundColor: '#fdcb6e', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                  <Text style={{ fontWeight: 'bold', color: 'black' }}>{report.correct + report.incorrect}</Text>
-                  <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#e17055', fontWeight: 'bold' }}>Attempted</Text>
-                </View>
-
-                {/* Correct Answers */}
-                <View style={{ backgroundColor: '#00b894', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                  <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.correct}</Text>
-                  <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#00b894', fontWeight: 'bold' }}>Correct</Text>
-                </View>
-
-                {/* Incorrect Answers */}
-                <View style={{ backgroundColor: '#d63031', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                  <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.incorrect}</Text>
-                  <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#d63031', fontWeight: 'bold' }}>Incorrect</Text>
-                </View>
-              </View>
-
-              {/* Pass/Fail/Good Circle */}
-              <View style={{
-                marginTop: 20,
-                width: 80,
-                height: 80,
-                borderRadius: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor:
-                  report.correct > 15 ? '#00b894' :
-                    report.correct > 8 ? '#0984e3' : '#d63031'
-              }}>
-                <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                  {report.correct > 15 ? "Great!" :
-                    report.correct > 8 ? "Pass" :
-                      "Fail"}
-                </Text>
-              </View>
-            </View>
-
-
-
-          )}
-
-  </>
-)}
-
-
-       
-
-
-
-
           {/* Flashcards */}
           <TouchableOpacity onPress={() => toggleFlashcard(courseIndex)} style={styles.flashcardToggle}>
             <Text style={styles.sectionTitle}>📖 Flashcards {flashcardVisibility[courseIndex] ? '-' : '+'}</Text>
@@ -248,6 +229,9 @@ const CourseContent = ({ jsonData }) => {
 };
 
 const styles = StyleSheet.create({
+  disabledOption: {
+    opacity: 0.5, // Light grey effect
+  },
   correctOption: {
     backgroundColor: 'green',
   },
