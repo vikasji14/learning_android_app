@@ -22,7 +22,7 @@ export default function Courses() {
                         Animated.timing(animatedValue, {
                             toValue: 1,
                             duration: 1000 + index * 300,
-                            useNativeDriver: true,
+                            useNativeDriver: false,
                         }).start();
 
                         return (

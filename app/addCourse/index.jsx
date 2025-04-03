@@ -68,7 +68,23 @@ const Index = () => {
             const aiRes = await chatSession.sendMessage(fullPrompt);
             let responseText = aiRes.response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
             // console.log("ai res",responseText);
-            setCourseContent(responseText);
+            let jsonData;
+            try {
+                let cleanedResponse = responseText.trim(); // Extra spaces remove
+
+                // 🔥 Remove Markdown Code Blocks (```json ... ```)
+                cleanedResponse = cleanedResponse.replace(/```json|```/g, "");
+
+                // 🔥 Remove trailing commas before closing brackets (invalid JSON fix)
+                cleanedResponse = cleanedResponse.replace(/,\s*([\]}])/g, "$1");
+
+                jsonData = JSON.parse(cleanedResponse);
+            } catch (error) {
+                console.error("❌ Error parsing JSON:", error);
+                return;
+            }
+
+            setCourseContent(jsonData);
         } catch (error) {
             console.error("Error generating topics:", error);
         }
@@ -163,7 +179,12 @@ const Index = () => {
             )
         }   
 
-        <CourseContent message={courseContent}/>
+       {
+        courseContent && (
+            <CourseContent jsonData={courseContent}/>
+        )
+
+       }
 
         </ScrollView>
     );

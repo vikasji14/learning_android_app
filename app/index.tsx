@@ -28,7 +28,7 @@ export default function HomeScreen() {
         <Text style={{fontSize:35, fontWeight:'bold', textAlign:'center', color:'white'}}>Welcome to learning app</Text>
         <Text style={{fontSize:20, marginTop:20, textAlign:'center', color:'white'}}>This is a learning app for students🧑🏻‍🎓 and teachers 🧑🏻‍🏫</Text>
         <TouchableOpacity onPress={() => router.push('/auth/signUp')}>
-            <Text style={{backgroundColor:'white', textShadowColor:'#0075Ff', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'black', fontSize:20 , fontWeight:'bold'}}>Get started</Text>
+            <Text style={{backgroundColor:'white', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'black', fontSize:20 , fontWeight:'bold'}}>Get started</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push('/auth/signIn')}>
             <Text style={{borderWidth:1, borderColor:'white', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'white', fontSize:16, shadowColor:'black'}}>Already have an account?</Text>
@@ -48,7 +48,7 @@ export default function HomeScreen() {
         </View> */}
 
         <TouchableOpacity onPress={() => router.push('/home')} >
-            <Text style={{backgroundColor:'white', textShadowColor:'#0075Ff', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'black', fontSize:20 , fontWeight:'bold'}}>Home Screen</Text>
+            <Text style={{backgroundColor:'white', padding:10, borderRadius:10, textAlign:'center', marginTop:20, color:'black', fontSize:20 , fontWeight:'bold'}}>Home Screen</Text>
         </TouchableOpacity>
       </View>
 

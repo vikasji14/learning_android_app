@@ -1,11 +1,7 @@
 import { Image, StyleSheet, Platform , View,Text} from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
-export default function Explore() {
+const  Explore =() => {
   return (
 
     <View>
@@ -13,3 +9,5 @@ export default function Explore() {
     </View>
   )
 }
+
+export default Explore;

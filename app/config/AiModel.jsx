@@ -19,3 +19,10 @@ const generationConfig = {
 export const initializeChatSession = async () => {
   return await model.startChat({ generationConfig, history: [] });
 };
+
+
+const AiModel = () => {
+  return <div>AI Model Initialized</div>;
+};
+
+export default AiModel;

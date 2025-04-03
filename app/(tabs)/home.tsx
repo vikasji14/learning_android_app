@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Courses from '@/components/Courses';
 import Practice from '@/components/Practice';
-export default function HomeScreen() {
+const  HomeScreen = () => {
   const router = useRouter();
 
 
@@ -38,3 +38,5 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+export default HomeScreen;
