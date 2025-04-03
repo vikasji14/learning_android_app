@@ -8,8 +8,8 @@ const CourseContent = ({ jsonData }) => {
   const [flashcardVisibility, setFlashcardVisibility] = useState({});
   const [quizVisibility, setQuizVisibility] = useState({});
   const [qaVisibility, setQaVisibility] = useState({});
-  const [quizSubmitted, setQuizSubmitted] = useState(false)
-  const [report, setReport] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState({}); // Store submission status per course
+const [report, setReport] = useState({}); // Store reports per course
   const optionLabels = ['A', 'B', 'C', 'D']; // Labels for options
   const handleAnswerSelect = (courseIndex, quizIndex, optionIndex, correctAnswer) => {
     setSelectedAnswers(prev => ({
@@ -21,28 +21,27 @@ const CourseContent = ({ jsonData }) => {
     }));
   };
 
-  const submitQuiz = () => {
-    setQuizSubmitted(true);
+  const submitQuiz = (courseIndex) => {
+    setQuizSubmitted(prev => ({ ...prev, [courseIndex]: true }));
+  
     let correct = 0, incorrect = 0, totalQa = 0;
-
-    jsonData.courses.forEach((course, courseIndex) => {
-      totalQa += course.quiz?.length || 0;
-
-      course.quiz?.forEach((question, questionIndex) => {
-        const answerData = selectedAnswers[`${courseIndex}-${questionIndex}`];
-
-        if (answerData) {  //Only count if the user has selected an answer
-          if (answerData.isCorrect) {
-            correct++; // Correct Answer Count
-          } else {
-            incorrect++; //Incorrect Answer Count
-          }
+  
+    jsonData.courses[courseIndex].quiz.forEach((question, questionIndex) => {
+      totalQa += 1;
+      const answerData = selectedAnswers[`${courseIndex}-${questionIndex}`];
+  
+      if (answerData) {
+        if (answerData.isCorrect) {
+          correct++;
+        } else {
+          incorrect++;
         }
-      });
+      }
     });
-
-    setReport({ totalQa, correct, incorrect });
+  
+    setReport(prev => ({ ...prev, [courseIndex]: { totalQa, correct, incorrect } }));
   };
+  
 
 
 
@@ -93,101 +92,98 @@ const CourseContent = ({ jsonData }) => {
           </TouchableOpacity>
 
           {quizVisibility[courseIndex] && (
-            <>
-              {course.quiz.map((quiz, quizIndex) => {
-                const selectedOption = selectedAnswers[`${courseIndex}-${quizIndex}`]?.selected;
-                return (
-                  <View key={quizIndex} style={styles.quizContainer}>
-                    <Text style={styles.quizQuestion}>{quiz.question}</Text>
-                    {quiz.options.map((option, optionIndex) => {
-                      const isSelected = selectedOption === optionIndex;
-                      const isCorrect = quiz.correctAnswer === option;
-                      const isDisabled = selectedOption !== undefined; // 🛑 Disable after selection
+  <>
+    {course.quiz.map((quiz, quizIndex) => {
+      const selectedOption = selectedAnswers[`${courseIndex}-${quizIndex}`]?.selected;
+      return (
+        <View key={quizIndex} style={styles.quizContainer}>
+          <Text style={styles.quizQuestion}>{quiz.question}</Text>
+          {quiz.options.map((option, optionIndex) => {
+            const isSelected = selectedOption === optionIndex;
+            const isCorrect = quiz.correctAnswer === option;
+            const isDisabled = selectedOption !== undefined;
 
-                      return (
-                        <TouchableOpacity
-                          key={optionIndex}
-                          onPress={() => !isDisabled && handleAnswerSelect(courseIndex, quizIndex, optionIndex, quiz.correctAnswer)} // 🔒 Disable selection after first choice
-                          style={[
-                            styles.quizOption,
-                            isSelected && (isCorrect ? styles.correctOption : styles.incorrectOption),
-                            isDisabled && styles.disabledOption // Optional: Style for disabled state
-                          ]}
-                          disabled={isDisabled} // 🚫 Disable button
-                        >
-                          <Text>{optionLabels[optionIndex]}. {option}</Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                    {quizSubmitted && (
-                      <Text style={styles.correctAnswer}>
-                        Answer: {optionLabels[quiz.options.findIndex(option => option === quiz.correctAnswer)]}
-                      </Text>
-                    )}
-                  </View>
-                );
-              })}
-
-              {/* 🟢 **Submit Button (only visible when quiz is open)** */}
-              <TouchableOpacity onPress={submitQuiz} style={styles.submitButton}>
-                <Text style={styles.submitButtonText}>Final Submit</Text>
+            return (
+              <TouchableOpacity
+                key={optionIndex}
+                onPress={() => !isDisabled && handleAnswerSelect(courseIndex, quizIndex, optionIndex, quiz.correctAnswer)}
+                style={[
+                  styles.quizOption,
+                  isSelected && (isCorrect ? styles.correctOption : styles.incorrectOption),
+                  isDisabled && styles.disabledOption
+                ]}
+                disabled={isDisabled}
+              >
+                <Text>{optionLabels[optionIndex]}. {option}</Text>
               </TouchableOpacity>
-
-              {quizSubmitted && (
-                <View style={{ alignItems: 'center', marginTop: 40 }}>
-                  {/* Box Container */}
-                  <View style={{ flexDirection: 'row', gap: 10 }}>
-                    {/* Total Questions */}
-                    <View style={{ backgroundColor: '#6c5ce7', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.totalQa}</Text>
-                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#6c5ce7', fontWeight: 'bold' }}>Total</Text>
-                    </View>
-
-                    {/* Total Attempted */}
-                    <View style={{ backgroundColor: '#fdcb6e', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                      <Text style={{ fontWeight: 'bold', color: 'black' }}>{report.correct + report.incorrect}</Text>
-                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#e17055', fontWeight: 'bold' }}>Attempted</Text>
-                    </View>
-
-                    {/* Correct Answers */}
-                    <View style={{ backgroundColor: '#00b894', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.correct}</Text>
-                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#00b894', fontWeight: 'bold' }}>Correct</Text>
-                    </View>
-
-                    {/* Incorrect Answers */}
-                    <View style={{ backgroundColor: '#d63031', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
-                      <Text style={{ fontWeight: 'bold', color: 'white' }}>{report.incorrect}</Text>
-                      <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#d63031', fontWeight: 'bold' }}>Incorrect</Text>
-                    </View>
-                  </View>
-
-                  {/* Pass/Fail/Good Circle */}
-                  <View style={{
-                    marginTop: 20,
-                    width: 80,
-                    height: 80,
-                    borderRadius: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor:
-                      report.correct > 15 ? '#00b894' :
-                        report.correct > 8 ? '#0984e3' : '#d63031'
-                  }}>
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                      {report.correct > 15 ? "Great!" :
-                        report.correct > 8 ? "Pass" :
-                          "Fail"}
-                    </Text>
-                  </View>
-                </View>
-
-
-
-              )}
-
-            </>
+            );
+          })}
+          {quizSubmitted[courseIndex] && (
+            <Text style={styles.correctAnswer}>
+              Answer: {optionLabels[quiz.options.findIndex(option => option === quiz.correctAnswer)]}
+            </Text>
           )}
+        </View>
+      );
+    })}
+<TouchableOpacity onPress={() => submitQuiz(courseIndex)} style={styles.submitButton}>
+  <Text style={styles.submitButtonText}>Final Submit</Text>
+</TouchableOpacity>
+    {quizSubmitted[courseIndex] && (
+     <View style={{ alignItems: 'center', marginTop: 40 }}>
+     {/* Box Container */}
+     <View style={{ flexDirection: 'row', gap: 10 }}>
+       {/* Total Questions */}
+       <View style={{ backgroundColor: '#6c5ce7', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+         <Text style={{ fontWeight: 'bold', color: 'white' }}>{report[courseIndex]?.totalQa}</Text>
+         <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#6c5ce7', fontWeight: 'bold' }}>Total</Text>
+       </View>
+   
+       {/* Total Attempted */}
+       <View style={{ backgroundColor: '#fdcb6e', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+         <Text style={{ fontWeight: 'bold', color: 'black' }}>{(report[courseIndex]?.correct || 0) + (report[courseIndex]?.incorrect || 0)}</Text>
+         <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#e17055', fontWeight: 'bold' }}>Attempted</Text>
+       </View>
+   
+       {/* Correct Answers */}
+       <View style={{ backgroundColor: '#00b894', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+         <Text style={{ fontWeight: 'bold', color: 'white' }}>{report[courseIndex]?.correct}</Text>
+         <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#00b894', fontWeight: 'bold' }}>Correct</Text>
+       </View>
+   
+       {/* Incorrect Answers */}
+       <View style={{ backgroundColor: '#d63031', padding: 10, borderRadius: 10, minWidth: 60, alignItems: 'center', position: 'relative' }}>
+         <Text style={{ fontWeight: 'bold', color: 'white' }}>{report[courseIndex]?.incorrect}</Text>
+         <Text style={{ position: 'absolute', top: -20, fontSize: 12, color: '#d63031', fontWeight: 'bold' }}>Incorrect</Text>
+       </View>
+     </View>
+   
+     {/* Pass/Fail/Good Circle */}
+     <View style={{
+       marginTop: 20,
+       width: 80,
+       height: 80,
+       borderRadius: 50,
+       alignItems: 'center',
+       justifyContent: 'center',
+       backgroundColor: 
+         report.correct > 15 ? '#00b894' :
+         report.correct > 8 ? '#0984e3' : '#d63031'
+     }}>
+       <Text style={{ color: 'white', fontWeight: 'bold' }}>
+         {report.correct > 15 ? "Great!" :
+          report.correct > 8 ? "Pass" : 
+          "Fail"}
+       </Text>
+     </View>
+   </View>
+   
+    )}
+    
+
+  </>
+)}
+
           {/* Flashcards */}
           <TouchableOpacity onPress={() => toggleFlashcard(courseIndex)} style={styles.flashcardToggle}>
             <Text style={styles.sectionTitle}>📖 Flashcards {flashcardVisibility[courseIndex] ? '-' : '+'}</Text>
